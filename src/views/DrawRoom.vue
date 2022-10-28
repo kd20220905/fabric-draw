@@ -64,7 +64,7 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
   const data = { host: false };
-  axios.post("http://localhost:3000/host", data).then((res) => {
+  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data).then((res) => {
     console.log(res.data);
   });
 });
