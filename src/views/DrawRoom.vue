@@ -71,7 +71,7 @@ onBeforeUnmount(() => {
 window.onbeforeunload = () => {
   const data = { host: false };
   axios.post("https://fabric-2022-10-27.herokuapp.com/host", data);
-  alert("退處逆?");
+  confirm("確定要離開?");
 };
 // api
 // 如果有人在畫, 不能進入
