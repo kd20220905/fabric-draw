@@ -70,18 +70,14 @@ onBeforeUnmount(() => {
 });
 window.onbeforeunload = () => {
   const data = { host: false };
-  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data).then((res) => {
-    console.log(res.data);
-  });
+  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data);
 };
 // api
 // 如果有人在畫, 不能進入
 axios.get("https://fabric-2022-10-27.herokuapp.com/checkhost").then((res) => {
   if (res.data) return router.push("/");
   const data = { host: true };
-  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data).then((res) => {
-    console.log(res.data);
-  });
+  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data);
 });
 </script>
 
