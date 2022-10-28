@@ -11,4 +11,5 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.config.globalProperties.$http = axios;
+app.config.globalProperties.$router = router;
 app.mount("#app");
