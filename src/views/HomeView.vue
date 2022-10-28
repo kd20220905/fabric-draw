@@ -1,6 +1,7 @@
 <script setup>
 import { fabric } from "fabric";
 import { getCurrentInstance, ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
 
 const { proxy } = getCurrentInstance();
 // fabric
@@ -64,6 +65,7 @@ setInterval(function () {
 </script>
 
 <template>
+  <RouterLink to="/quessRoom">TOTOTOT</RouterLink>
   <div class="flex items-end">
     <div class="relative range-bar -rotate-90 -translate-y-40 translate-x-24">
       <input
