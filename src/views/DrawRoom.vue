@@ -57,7 +57,6 @@ ws.onclose = () => {
 setInterval(function () {
   let path = canvas.value.toJSON();
   ws.send(JSON.stringify(path));
-  // console.log(testMsg);
 }, 1000);
 </script>
 
@@ -120,7 +119,7 @@ input[type="range"] {
   background-color: rgba(0, 0, 0, 0);
   position: absolute;
 }
-input[type="range"]::-webkit-slider-thumb{
+input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 30px;
   height: 30px;

@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "@/views/HomeView.vue";
+import QuessRoom from "@/views/QuessRoom.vue";
+import DrawRoom from "@/views/DrawRoom.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,13 +13,13 @@ const router = createRouter({
     },
     {
       path: "/quessroom",
-      name: "quessroom",
-      component: () => import("../views/QuessRoom.vue"),
+      name: "QuessRoom",
+      component: QuessRoom,
     },
     {
       path: "/drawroom",
-      name: "drawroom",
-      component: () => import("../views/DrawRoom.vue"),
+      name: "DrawRoom",
+      component: DrawRoom,
     },
   ],
 });

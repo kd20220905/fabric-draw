@@ -1,7 +1,6 @@
 <script setup>
 import { fabric } from "fabric";
 import { getCurrentInstance, ref, onMounted } from "vue";
-const { proxy } = getCurrentInstance();
 // fabric
 const canvas2 = ref(null);
 onMounted(() => {
