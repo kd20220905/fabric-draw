@@ -1,6 +1,7 @@
 <script setup>
 import { fabric } from "fabric";
-import { getCurrentInstance, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
+
 // fabric
 const canvas2 = ref(null);
 onMounted(() => {
@@ -15,12 +16,12 @@ ws.onmessage = (event) => {
   // console.log(JSON.parse(event.data), event.data);
   let path = JSON.parse(event.data);
   canvas2.value.loadFromJSON(path);
-  console.log(canvas2.value)
+  console.log(canvas2.value);
 };
 </script>
 
 <template>
-  <canvas id="b" class="rect" width="500" height="500"></canvas>
+  <canvas id="b" class="rect" width="800" height="500"></canvas>
 </template>
 
 <style scoped>

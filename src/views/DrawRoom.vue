@@ -1,7 +1,10 @@
 <script setup>
 import { fabric } from "fabric";
-import { getCurrentInstance, ref, onMounted } from "vue";
-const { proxy } = getCurrentInstance();
+import { ref, onMounted, onBeforeUnmount, onUnmounted } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 // fabric
 const canvas = ref(null);
 const colorAry = ref([
@@ -41,23 +44,45 @@ onMounted(() => {
   // 預設筆刷顏色與粗度
   canvas.value.freeDrawingBrush.color = color.value;
   canvas.value.freeDrawingBrush.width = parseInt(width.value, 10);
+  // canvas.value.setBackgroundImage(
+  //   "https://cdn-old.brawlify.com/map/Camping-Grounds.png",
+  //   () => canvas.value.renderAll()
+  // );
+  //ws
+  const ws = new WebSocket("wss://fabric-2022-10-27.herokuapp.com/");
+  ws.onopen = () => {
+    console.log("open connection");
+  };
+  ws.onclose = () => {
+    console.log("close connection");
+  };
+  // 發送WS
+  setInterval(function () {
+    let path = canvas.value.toJSON();
+    ws.send(JSON.stringify(path));
+  }, 1000);
 });
-
-//ws
-const ws = new WebSocket("wss://fabric-2022-10-27.herokuapp.com/");
-ws.onopen = () => {
-  console.log("open connection");
+onBeforeUnmount(() => {
+  const data = { host: false };
+  axios.post("http://localhost:3000/host", data).then((res) => {
+    console.log(res.data);
+  });
+});
+window.onbeforeunload = () => {
+  const data = { host: false };
+  axios.post("http://localhost:3000/host", data).then((res) => {
+    console.log(res.data);
+  });
 };
-
-ws.onclose = () => {
-  console.log("close connection");
-};
-
-// 發送WS
-setInterval(function () {
-  let path = canvas.value.toJSON();
-  ws.send(JSON.stringify(path));
-}, 1000);
+// api
+// 如果有人在畫, 不能進入
+axios.get("http://localhost:3000/checkhost").then((res) => {
+  if (res.data) return router.push("/");
+  const data = { host: true };
+  axios.post("http://localhost:3000/host", data).then((res) => {
+    console.log(res.data);
+  });
+});
 </script>
 
 <template>
@@ -75,7 +100,7 @@ setInterval(function () {
       />
     </div>
     <div>
-      <canvas id="c" class="rect" width="500" height="500"></canvas>
+      <canvas id="c" class="rect" width="800" height="500"></canvas>
       <div class="my-5 flex items-center justify-between">
         <button
           class="border rounded-md p-2 text-slate-400 hover:text-black hover:border-black"

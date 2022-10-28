@@ -1,7 +1,12 @@
 <script setup>
-import { getCurrentInstance } from "vue";
+import { getCurrentInstance, ref, onMounted } from "vue";
+import axios from "axios";
 const { proxy } = getCurrentInstance();
 
+let host = ref(false);
+axios.get("http://localhost:3000/checkhost").then((res) => {
+  host.value = res.data;
+});
 const toRoom = (path) => {
   proxy.$router.push(path);
 };
@@ -15,7 +20,16 @@ const toRoom = (path) => {
   </button>
   <button
     @click.prevent="toRoom('/drawroom')"
+    class="bg-slate-400 p-3 rounded-md text-white"
+    v-if="host"
+    disabled
+  >
+    請重整測試
+  </button>
+  <button
+    @click.prevent="toRoom('/drawroom')"
     class="bg-red-400 p-3 rounded-md text-white"
+    v-else
   >
     畫方
   </button>
