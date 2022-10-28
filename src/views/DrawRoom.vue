@@ -70,16 +70,16 @@ onBeforeUnmount(() => {
 });
 window.onbeforeunload = () => {
   const data = { host: false };
-  axios.post("http://localhost:3000/host", data).then((res) => {
+  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data).then((res) => {
     console.log(res.data);
   });
 };
 // api
 // 如果有人在畫, 不能進入
-axios.get("http://localhost:3000/checkhost").then((res) => {
+axios.get("https://fabric-2022-10-27.herokuapp.com/checkhost").then((res) => {
   if (res.data) return router.push("/");
   const data = { host: true };
-  axios.post("http://localhost:3000/host", data).then((res) => {
+  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data).then((res) => {
     console.log(res.data);
   });
 });

@@ -4,7 +4,7 @@ import axios from "axios";
 const { proxy } = getCurrentInstance();
 
 let host = ref(false);
-axios.get("http://localhost:3000/checkhost").then((res) => {
+axios.get("https://fabric-2022-10-27.herokuapp.com/checkhost").then((res) => {
   host.value = res.data;
 });
 const toRoom = (path) => {
