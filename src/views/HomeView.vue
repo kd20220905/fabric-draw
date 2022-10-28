@@ -62,10 +62,14 @@ setInterval(function () {
   ws.send(JSON.stringify(path));
   // console.log(testMsg);
 }, 100);
+
+const toRoom = () => {
+  console.log("123");
+  proxy.$router.push("/quessRoom");
+};
 </script>
 
 <template>
-  <RouterLink to="/quessRoom">TOTOTOT</RouterLink>
   <div class="flex items-end">
     <div class="relative range-bar -rotate-90 -translate-y-40 translate-x-24">
       <input
@@ -110,6 +114,12 @@ setInterval(function () {
           @change="drawingColor"
         />
       </div>
+      <button
+        @click.prevent="toRoom"
+        class="bg-red-400 p-3 rounded-md text-white"
+      >
+        下一頁
+      </button>
     </div>
   </div>
 </template>
