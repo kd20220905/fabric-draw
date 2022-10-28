@@ -16,6 +16,7 @@ ws.onmessage = (event) => {
   // console.log(JSON.parse(event.data), event.data);
   let path = JSON.parse(event.data);
   canvas2.value.loadFromJSON(path);
+  console.log(canvas2.value)
 };
 </script>
 

@@ -61,7 +61,7 @@ setInterval(function () {
   let path = canvas.value.toJSON();
   ws.send(JSON.stringify(path));
   // console.log(testMsg);
-}, 100);
+}, 1000);
 
 const toRoom = () => {
   console.log("123");
