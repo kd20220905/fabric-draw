@@ -1,6 +1,6 @@
 <script setup>
 import { fabric } from "fabric";
-import { ref, onMounted, onBeforeUnmount, onUnmounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -19,8 +19,41 @@ const colorAry = ref([
 ]);
 const color = ref("#000000");
 const width = ref("10");
+const editModel = ref(true);
 const clearEl = () => {
   canvas.value.clear();
+};
+const undoEl = () => {
+  // console.log(canvas.value.getObjects()[canvas.value.getObjects().length - 1]);
+  const lastDraw = canvas.value.getObjects().length - 1;
+  canvas.value.remove(canvas.value.getObjects()[lastDraw]);
+};
+const editEl = () => {
+  canvas.value.isDrawingMode = !canvas.value.isDrawingMode;
+  editModel.value = !editModel.value;
+};
+const imageEl = (e) => {
+  const fileReader = new FileReader();
+  fileReader.readAsDataURL(e.target.files[0]);
+  fileReader.addEventListener("load", () => {
+    let res = fileReader.result;
+    const imgEl = document.createElement("img");
+    imgEl.src = res;
+    imgEl.onload = () => {
+      // height: window.innerWidth > 800 ? 600 : (window.innerWidth * 3) / 4,
+      // width: window.innerWidth > 800 ? 800 : window.innerWidth,
+      // imgW * 3 < imgH * 4 imgH = canvaH / 3 || (imgW = canvaH /imgH * imgW) / 3
+      // imgW * 3 < imgH * 4 imgW = (canvaH /imgH * imgW) 4 || (canvaW) / 4
+      const scalePercent = ( imgEl.width * 3 < imgEl.height * 4 ) ? canvas.value.height / imgEl.height : canvas.value.width / imgEl.width 
+      const image = new fabric.Image(imgEl, {
+        scaleX: scalePercent,
+        scaleY: scalePercent,
+        top: 160,
+        left: 100,
+      });
+      canvas.value.add(image);
+    };
+  });
 };
 // 單選 筆刷顏色
 const selectColor = (colorEle) => {
@@ -38,16 +71,13 @@ const drawingWidth = () => {
 onMounted(() => {
   // 可繪畫
   canvas.value = new fabric.Canvas("c", {
-    isDrawingMode: true,
+    // isDrawingMode: true,
+    // RWD
+    height: window.innerWidth > 800 ? 600 : (window.innerWidth * 3) / 4,
+    width: window.innerWidth > 800 ? 800 : window.innerWidth,
   });
-  // 繪畫後渲染
-  // 預設筆刷顏色與粗度
   canvas.value.freeDrawingBrush.color = color.value;
   canvas.value.freeDrawingBrush.width = parseInt(width.value, 10);
-  // canvas.value.setBackgroundImage(
-  //   "https://cdn-old.brawlify.com/map/Camping-Grounds.png",
-  //   () => canvas.value.renderAll()
-  // );
   //ws
   const ws = new WebSocket("wss://fabric-2022-10-27.herokuapp.com/");
   ws.onopen = () => {
@@ -58,8 +88,21 @@ onMounted(() => {
   };
   // 發送WS
   setInterval(function () {
-    let path = canvas.value.toJSON();
-    ws.send(JSON.stringify(path));
+    // let path = canvas.value.toJSON();
+    const svgData = canvas.value.toSVG({
+      svgViewportTransformation: false,
+      suppressPreamble: true,
+      viewBox: {
+        x: 0,
+        y: 0,
+        width: 800,
+        height: 600,
+      },
+    });
+    let data = {
+      svg: svgData,
+    };
+    ws.send(JSON.stringify(data));
   }, 1000);
 });
 onBeforeUnmount(() => {
@@ -83,41 +126,35 @@ axios.get("https://fabric-2022-10-27.herokuapp.com/checkhost").then((res) => {
 </script>
 
 <template>
-  <div class="flex items-end">
-    <div class="relative range-bar -rotate-90 -translate-y-40 translate-x-24">
-      <input
-        class="translate-y-1/2 bottom-1/2"
-        type="range"
-        name="width"
-        id="width"
-        min="1"
-        max="50"
-        @change="drawingWidth"
-        v-model="width"
-      />
+  <div class="flex flex-col p-5">
+    <div class="mx-auto">
+      <div class="relative range-bar -rotate-90 translate-y-28 -translate-x-24">
+        <input
+          class="translate-y-1/2 bottom-1/2"
+          type="range"
+          name="width"
+          id="width"
+          min="1"
+          max="50"
+          @change="drawingWidth"
+          v-model="width"
+        />
+      </div>
+      <canvas id="c" class="rect"></canvas>
     </div>
-    <div>
-      <canvas id="c" class="rect" width="800" height="500"></canvas>
-      <div class="my-5 flex items-center justify-between">
+    <div class="my-5 flex flex-col items-center justify-between">
+      <div>
         <button
-          class="border rounded-md p-2 text-slate-400 hover:text-black hover:border-black"
-          @click.prevent="clearEl()"
+          class="border p-1 rounded-full mr-1 hover:border-slate-600"
+          v-for="color in colorAry"
+          :key="color"
+          @click.prevent="selectColor(color)"
         >
-          清空
+          <div
+            class="color-ball border rounded-full"
+            :style="`background: ${color}`"
+          ></div>
         </button>
-        <div>
-          <button
-            class="border p-1 rounded-full mr-1 hover:border-slate-600"
-            v-for="color in colorAry"
-            :key="color"
-            @click.prevent="selectColor(color)"
-          >
-            <div
-              class="color-ball border rounded-full"
-              :style="`background: ${color}`"
-            ></div>
-          </button>
-        </div>
         <input
           class="h-10 my-auto"
           type="color"
@@ -126,6 +163,31 @@ axios.get("https://fabric-2022-10-27.herokuapp.com/checkhost").then((res) => {
           v-model="color"
           @change="drawingColor"
         />
+      </div>
+      <div class="md:flex block mt-5">
+        <button
+          class="border rounded-md mr-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          @click.prevent="editEl()"
+        >
+          {{ editModel ? "編輯模式" : "筆刷模式" }}
+        </button>
+        <input
+          type="file"
+          class="border rounded-md mr-2 p-2 text-slate-400"
+          @change.prevent="imageEl"
+        />
+        <button
+          class="border rounded-md mr-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          @click.prevent="undoEl()"
+        >
+          undo
+        </button>
+        <button
+          class="border rounded-md mr-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          @click.prevent="clearEl()"
+        >
+          清空
+        </button>
       </div>
     </div>
   </div>
