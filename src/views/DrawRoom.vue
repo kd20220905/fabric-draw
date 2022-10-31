@@ -92,8 +92,8 @@ onMounted(() => {
     const svgData = canvas.value.toSVG({
       svgViewportTransformation: false,
       suppressPreamble: true,
-      width: 0,
-      height: 0,
+      width: "100%",
+      height: "100%",
       viewBox: {
         x: 0,
         y: 0,
