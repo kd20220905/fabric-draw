@@ -16,7 +16,7 @@ const pushanswer = () => {
     member: props.describe,
   };
   emit("answer", data);
-  console.log(data);
+  myAnswer.value = "";
 }
 const myAnswer = ref("");
 </script>
