@@ -13,7 +13,7 @@ const roomMembers = ref([]);
 //ws
 // 接ws
 const ws = new WebSocket(
-  "ws://fabric-2022-10-27.herokuapp.com/gameRoom/" + route.params.id
+  "wss://fabric-2022-10-27.herokuapp.com/gameRoom/" + route.params.id
 );
 
 ws.onmessage = (event) => {
@@ -30,7 +30,7 @@ ws.onmessage = (event) => {
 
 const emitAnswer = (answer) => {
   const api =
-    "http://fabric-2022-10-27.herokuapp.com/roomChat/" + route.params.id;
+    "https://fabric-2022-10-27.herokuapp.com/roomChat/" + route.params.id;
   axios.post(api, answer).then((res) => {
     console.log(res);
   });

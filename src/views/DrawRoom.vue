@@ -89,7 +89,7 @@ onMounted(() => {
   canvas.value.freeDrawingBrush.width = parseInt(width.value, 10);
   //ws
   const ws = new WebSocket(
-    "ws://fabric-2022-10-27.herokuapp.com/gameRoom/" + route.params.id
+    "wss://fabric-2022-10-27.herokuapp.com/gameRoom/" + route.params.id
   );
   ws.onmessage = (event) => {
     let { roomId, chat, members, answer, hasAnswer } = JSON.parse(event.data);
@@ -102,7 +102,7 @@ onMounted(() => {
   };
   ws.onopen = () => {
     console.log(
-      "ws://fabric-2022-10-27.herokuapp.com/gameRoom/" + route.params.id
+      "wss://fabric-2022-10-27.herokuapp.com/gameRoom/" + route.params.id
     );
   };
   ws.onclose = () => {

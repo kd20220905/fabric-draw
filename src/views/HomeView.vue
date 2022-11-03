@@ -20,7 +20,7 @@ let answerData = ref({
 });
 const toQuessRoom = (path) => {
   axios
-    .post("http://fabric-2022-10-27.herokuapp.com/InRoom", quessData.value)
+    .post("https://fabric-2022-10-27.herokuapp.com/InRoom", quessData.value)
     .then((res) => {
       if (res.data.states === 200) return proxy.$router.push(path);
       massage.value = res.data.massage;
@@ -29,7 +29,7 @@ const toQuessRoom = (path) => {
 };
 const toDrawRoom = (path) => {
   axios
-    .post("http://fabric-2022-10-27.herokuapp.com/newRoom", answerData.value)
+    .post("https://fabric-2022-10-27.herokuapp.com/newRoom", answerData.value)
     .then((res) => {
       if (res.data.states === "200") return proxy.$router.push(path);
       massage.value = res.data.massage;
