@@ -2,9 +2,10 @@
 import { fabric } from "fabric";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { useRoute } from "vue-router";
+import MenbersChat from "../components/menbersChat.vue";
 
+const route = useRoute();
 // fabric
 const canvas = ref(null);
 const colorAry = ref([
@@ -68,6 +69,14 @@ const drawingColor = () => {
 const drawingWidth = () => {
   canvas.value.freeDrawingBrush.width = parseInt(width.value, 10);
 };
+
+// room content
+const roomTitle = ref(null);
+const roomChat = ref([]);
+const roomMembers = ref([]);
+const roomAnswer = ref("");
+const roomHasAnswer = ref(false);
+
 onMounted(() => {
   // 可繪畫
   canvas.value = new fabric.Canvas("c", {
@@ -79,9 +88,22 @@ onMounted(() => {
   canvas.value.freeDrawingBrush.color = color.value;
   canvas.value.freeDrawingBrush.width = parseInt(width.value, 10);
   //ws
-  const ws = new WebSocket("wss://fabric-2022-10-27.herokuapp.com/");
+  const ws = new WebSocket(
+    "ws://fabric-2022-10-27.herokuapp.com/gameRoom/" + route.params.id
+  );
+  ws.onmessage = (event) => {
+    let { roomId, chat, members, answer, hasAnswer } = JSON.parse(event.data);
+    roomTitle.value = roomId;
+    roomChat.value = chat;
+    roomMembers.value = members;
+    roomAnswer.value = answer;
+    roomHasAnswer.value = hasAnswer;
+    console.log(JSON.parse(event.data));
+  };
   ws.onopen = () => {
-    console.log("open connection");
+    console.log(
+      "ws://fabric-2022-10-27.herokuapp.com/gameRoom/" + route.params.id
+    );
   };
   ws.onclose = () => {
     console.log("close connection");
@@ -94,43 +116,19 @@ onMounted(() => {
       suppressPreamble: true,
       width: "100%",
       height: "100%",
-      viewBox: {
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-      },
     });
     let data = {
       svg: svgData,
     };
     ws.send(JSON.stringify(data));
-  }, 1000);
-});
-onBeforeUnmount(() => {
-  const data = { host: false };
-  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data).then((res) => {
-    console.log(res.data);
-  });
-});
-window.onbeforeunload = () => {
-  const data = { host: false };
-  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data);
-  confirm("確定要離開?");
-};
-// api
-// 如果有人在畫, 不能進入
-axios.get("https://fabric-2022-10-27.herokuapp.com/checkhost").then((res) => {
-  if (res.data) return router.push("/");
-  const data = { host: true };
-  axios.post("https://fabric-2022-10-27.herokuapp.com/host", data);
+  }, 800);
 });
 </script>
 
 <template>
-  <div class="flex flex-col p-5">
+  <div class="flex flex-col">
     <div class="mx-auto">
-      <div class="relative range-bar -rotate-90 translate-y-28 -translate-x-24">
+      <div class="range-bar -rotate-90 translate-y-28 -translate-x-24">
         <input
           class="translate-y-1/2 bottom-1/2"
           type="range"
@@ -168,30 +166,40 @@ axios.get("https://fabric-2022-10-27.herokuapp.com/checkhost").then((res) => {
       </div>
       <div class="md:flex block mt-5">
         <button
-          class="border rounded-md mr-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
           @click.prevent="editEl()"
         >
           {{ editModel ? "編輯模式" : "筆刷模式" }}
         </button>
-        <input
-          type="file"
-          class="border rounded-md mr-2 p-2 text-slate-400"
-          @change.prevent="imageEl"
-        />
         <button
-          class="border rounded-md mr-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
           @click.prevent="undoEl()"
         >
-          undo
+          上一步
         </button>
         <button
-          class="border rounded-md mr-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
           @click.prevent="clearEl()"
         >
           清空
         </button>
+        <input
+          type="file"
+          class="border rounded-md m-2 p-2 text-slate-400 file:text-slate-400 file:bg-white file:px-4 file:border-0"
+          @change.prevent="imageEl"
+        />
       </div>
     </div>
+  </div>
+  <div class="m-5">
+    <MenbersChat
+      title="房間ID"
+      :describe="String(roomTitle)"
+      :chats="roomChat"
+      :members="roomMembers"
+      :roomanswer="roomAnswer"
+      :hasanswer="roomHasAnswer"
+    />
   </div>
 </template>
 
