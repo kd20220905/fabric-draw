@@ -1,6 +1,6 @@
 <script setup>
 import { fabric } from "fabric";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { apiRoomAnswer, apiRoomChat } from "../assets/API";
 import MembersChat from "../components/menbersChat.vue";
@@ -77,7 +77,12 @@ const roomChat = ref([]);
 const roomMembers = ref([]);
 const roomAnswer = ref("");
 const roomHasAnswer = ref(false);
-
+watchEffect(() => {
+  if (canvas.value && !roomHasAnswer.value) {
+    canvas.value.isDrawingMode = false;
+    editModel.value = false;
+  }
+});
 onMounted(() => {
   // 可繪畫
   canvas.value = new fabric.Canvas("c", {
