@@ -3,27 +3,33 @@ import { ref } from "vue";
 const props = defineProps({
   title: { type: String },
   describe: { type: String || Number },
-  chats: { type: Array, },
+  chats: { type: Array },
   members: { type: Array },
   roomanswer: { type: String },
   hasanswer: { type: Boolean },
 });
 
-const emit = defineEmits(["answer"]);
+const emit = defineEmits(["answer", "roomanswer"]);
 const pushanswer = () => {
   let data = {
     chat: myAnswer.value,
     member: props.describe,
   };
+  let roomData = {
+    hasAnswer: true,
+    answer: myAnswer.value,
+  };
   emit("answer", data);
+  emit("roomanswer", roomData);
   myAnswer.value = "";
-}
+};
 const myAnswer = ref("");
 </script>
 
 <template>
   <h2 class="font-bold text-xl mb-2">
-    {{ props.title }} : <span>{{ props.describe }}</span>
+    {{ props.title === "draw" ? "房間ID :" : "玩家名稱 :" }}
+    <span>{{ props.describe }}</span>
   </h2>
   <div class="border inline-block rounded-md mb-2">
     <input
@@ -41,18 +47,27 @@ const myAnswer = ref("");
       送出
     </button>
   </div>
+  <p
+    class="md:inline block md:ml-5 m-0 text-red-400"
+    v-if="props.title === 'draw'"
+  >
+    我的答案 : {{ props.roomanswer }}
+  </p>
   <div
-    class="text-md w-full border rounded-md resize-none p-2 chat overflow-y-scroll">
-    <p 
+    class="text-md w-full border rounded-md resize-none p-2 chat overflow-y-scroll"
+  >
+    <p
       class="font-bold block break-words border-b p-2"
-      v-for="(chat, index) in chats"
-      :key="chat.member + chat.chat">
+      v-for="chat in chats"
+      :key="chat.member + chat.chat"
+    >
       {{ chat.member + "：" }} <span> {{ chat.chat }} </span>
     </p>
   </div>
-  <div class="font-bold text-xl mb-2">房內玩家:
+  <div class="font-bold text-xl mb-2">
+    房內玩家:
     <p
-      v-for="(member, index) in members"
+      v-for="member in members"
       :key="member.memberId"
       class="font-normal text-base"
     >

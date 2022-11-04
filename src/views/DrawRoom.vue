@@ -1,11 +1,11 @@
 <script setup>
 import { fabric } from "fabric";
-import { ref, onMounted, onBeforeUnmount } from "vue";
-import axios from "axios";
+import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import MenbersChat from "../components/menbersChat.vue";
-
+import { apiRoomAnswer, apiRoomChat } from "../assets/API";
+import MembersChat from "../components/menbersChat.vue";
 const route = useRoute();
+
 // fabric
 const canvas = ref(null);
 const colorAry = ref([
@@ -20,7 +20,8 @@ const colorAry = ref([
 ]);
 const color = ref("#000000");
 const width = ref("10");
-const editModel = ref(true);
+const editModel = ref(false);
+
 const clearEl = () => {
   canvas.value.clear();
 };
@@ -80,7 +81,7 @@ const roomHasAnswer = ref(false);
 onMounted(() => {
   // 可繪畫
   canvas.value = new fabric.Canvas("c", {
-    // isDrawingMode: true,
+    // isDrawingMode: roomHasAnswer.value,
     // RWD
     height: window.innerWidth > 800 ? 600 : (window.innerWidth * 3) / 4,
     width: window.innerWidth > 800 ? 800 : window.innerWidth,
@@ -123,6 +124,17 @@ onMounted(() => {
     ws.send(JSON.stringify(data));
   }, 800);
 });
+
+// api
+const emitAnswer = (answer) => {
+  let roomBulletin = {
+    chat: "房主已經送出新答案",
+    member: "房間公告",
+  };
+  apiRoomAnswer(route.params.id, answer).then(() => {
+    apiRoomChat(route.params.id, roomBulletin);
+  });
+};
 </script>
 
 <template>
@@ -168,9 +180,11 @@ onMounted(() => {
         <button
           class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
           @click.prevent="editEl()"
+          v-if="roomHasAnswer"
         >
-          {{ editModel ? "編輯模式" : "筆刷模式" }}
+          {{ editModel ? "切換編輯模式" : "切換筆刷模式" }}
         </button>
+        <p class="border rounded-md m-2 p-2 text-slate-400" v-else>請先送出答案</p>
         <button
           class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
           @click.prevent="undoEl()"
@@ -192,13 +206,14 @@ onMounted(() => {
     </div>
   </div>
   <div class="m-5">
-    <MenbersChat
-      title="房間ID"
+    <MembersChat
+      title="draw"
       :describe="String(roomTitle)"
       :chats="roomChat"
       :members="roomMembers"
       :roomanswer="roomAnswer"
       :hasanswer="roomHasAnswer"
+      @roomanswer="emitAnswer"
     />
   </div>
 </template>

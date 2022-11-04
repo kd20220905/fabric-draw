@@ -1,6 +1,6 @@
 <script setup>
-import { getCurrentInstance, ref, onMounted } from "vue";
-import axios from "axios";
+import { getCurrentInstance, ref } from "vue";
+import { apiNewRoom, apiInRoom } from "../assets/API";
 const { proxy } = getCurrentInstance();
 const date = new Date();
 let massage = ref("選擇你要的角色");
@@ -19,22 +19,18 @@ let answerData = ref({
   hasAnswer: false,
 });
 const toQuessRoom = (path) => {
-  axios
-    .post("https://fabric-2022-10-27.herokuapp.com/InRoom", quessData.value)
-    .then((res) => {
-      if (res.data.states === 200) return proxy.$router.push(path);
-      massage.value = res.data.massage;
-      console.log(massage.value);
-    });
+  apiInRoom(quessData.value).then((res) => {
+    if (res.data.states === 200) return proxy.$router.push(path);
+    massage.value = res.data.massage;
+    console.log(massage.value);
+  });
 };
 const toDrawRoom = (path) => {
-  axios
-    .post("https://fabric-2022-10-27.herokuapp.com/newRoom", answerData.value)
-    .then((res) => {
-      if (res.data.states === "200") return proxy.$router.push(path);
-      massage.value = res.data.massage;
-      console.log(path);
-    });
+  apiNewRoom(answerData.value).then((res) => {
+    if (res.data.states === "200") return proxy.$router.push(path);
+    massage.value = res.data.massage;
+    console.log(path);
+  });
 };
 </script>
 <template>

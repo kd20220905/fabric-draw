@@ -1,11 +1,13 @@
 <script setup>
 import axios from "axios";
+import { apiRoomChat } from "../assets/API";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import MembersChat from "../components/menbersChat.vue";
 
 const route = useRoute();
 const svgNode = ref("");
+
 // room content
 const roomTitle = ref(null);
 const roomChat = ref([]);
@@ -29,9 +31,7 @@ ws.onmessage = (event) => {
 };
 
 const emitAnswer = (answer) => {
-  const api =
-    "https://fabric-2022-10-27.herokuapp.com/roomChat/" + route.params.id;
-  axios.post(api, answer).then((res) => {
+  apiRoomChat(route.params.id, answer).then((res) => {
     console.log(res);
   });
 };
@@ -46,7 +46,7 @@ const emitAnswer = (answer) => {
     </div>
     <div class="m-5">
       <MembersChat
-        title="玩家暱稱"
+        title="quess"
         :describe="String(roomTitle)"
         :chats="roomChat"
         :members="roomMembers"
