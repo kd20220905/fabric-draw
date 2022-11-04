@@ -137,7 +137,9 @@ const emitAnswer = (answer) => {
     member: "房間公告",
   };
   apiRoomAnswer(route.params.id, answer).then(() => {
-    apiRoomChat(route.params.id, roomBulletin);
+    apiRoomChat(route.params.id, roomBulletin).then(() => {
+      clearEl();
+    });
   });
 };
 </script>
