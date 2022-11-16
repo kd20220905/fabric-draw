@@ -38,21 +38,19 @@ const emitAnswer = (answer) => {
 </script>
 
 <template>
-  <div class="grid md:grid-cols-2 grid-cols-1">
-    <div class="flex">
-      <div class="rect m-5">
-        <div v-html="svgNode"></div>
-      </div>
+  <div class="flex items-center justify-center">
+    <div class="rect m-5">
+      <div v-html="svgNode"></div>
     </div>
-    <div class="m-5">
-      <MembersChat
-        title="quess"
-        :describe="String(roomTitle)"
-        :chats="roomChat"
-        :members="roomMembers"
-        @answer="emitAnswer"
-      />
-    </div>
+  </div>
+  <div class="m-5">
+    <MembersChat
+      title="quess"
+      :describe="String(roomTitle)"
+      :chats="roomChat"
+      :members="roomMembers"
+      @answer="emitAnswer"
+    />
   </div>
 </template>
 

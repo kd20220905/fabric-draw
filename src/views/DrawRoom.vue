@@ -183,32 +183,34 @@ const emitAnswer = (answer) => {
           @change="drawingColor"
         />
       </div>
-      <div class="md:flex block mt-5">
+      <div class="md:flex mt-5">
         <button
           class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
           @click.prevent="editEl()"
           v-if="roomHasAnswer"
         >
-          {{ editModel ? "切換編輯模式" : "切換筆刷模式" }}
+          <font-awesome-icon icon="paintbrush" v-if="editModel" />
+          <font-awesome-icon icon="pen-to-square" v-else />
         </button>
-        <p class="border rounded-md m-2 p-2 text-slate-400" v-else>請先送出答案</p>
+        <p class="border rounded-md m-2 p-2 text-slate-400 text-center" v-else>請先送出答案</p>
         <button
           class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
           @click.prevent="undoEl()"
         >
-          上一步
+          <font-awesome-icon icon="reply" />
         </button>
         <button
           class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
           @click.prevent="clearEl()"
         >
-          清空
+          <font-awesome-icon icon="trash-can" />
         </button>
-        <input
+        <!-- 上傳檔案 -->
+        <!-- <input
           type="file"
           class="border rounded-md m-2 p-2 text-slate-400 file:text-slate-400 file:bg-white file:px-4 file:border-0"
           @change.prevent="imageEl"
-        />
+        /> -->
       </div>
     </div>
   </div>
@@ -258,5 +260,11 @@ input[type="range"]::-webkit-slider-thumb {
 .color-ball {
   width: 35px;
   height: 35px;
+}
+@media screen and (max-width: 480px) {
+  .color-ball {
+    width: 25px;
+    height: 25px;
+  }
 }
 </style>
