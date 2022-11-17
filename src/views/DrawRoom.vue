@@ -24,6 +24,7 @@ const editModel = ref(false);
 
 const clearEl = () => {
   canvas.value.clear();
+  canvas.value.setBackgroundColor("#ffffff");
 };
 const undoEl = () => {
   // console.log(canvas.value.getObjects()[canvas.value.getObjects().length - 1]);
@@ -34,29 +35,30 @@ const editEl = () => {
   canvas.value.isDrawingMode = !canvas.value.isDrawingMode;
   editModel.value = !editModel.value;
 };
-const imageEl = (e) => {
-  const fileReader = new FileReader();
-  fileReader.readAsDataURL(e.target.files[0]);
-  fileReader.addEventListener("load", () => {
-    let res = fileReader.result;
-    const imgEl = document.createElement("img");
-    imgEl.src = res;
-    imgEl.onload = () => {
-      // height: window.innerWidth > 800 ? 600 : (window.innerWidth * 3) / 4,
-      // width: window.innerWidth > 800 ? 800 : window.innerWidth,
-      // imgW * 3 < imgH * 4 imgH = canvaH / 3 || (imgW = canvaH /imgH * imgW) / 3
-      // imgW * 3 < imgH * 4 imgW = (canvaH /imgH * imgW) 4 || (canvaW) / 4
-      const scalePercent = ( imgEl.width * 3 < imgEl.height * 4 ) ? canvas.value.height / imgEl.height : canvas.value.width / imgEl.width 
-      const image = new fabric.Image(imgEl, {
-        scaleX: scalePercent,
-        scaleY: scalePercent,
-        top: 160,
-        left: 100,
-      });
-      canvas.value.add(image);
-    };
-  });
-};
+//上傳檔案
+// const imageEl = (e) => {
+//   const fileReader = new FileReader();
+//   fileReader.readAsDataURL(e.target.files[0]);
+//   fileReader.addEventListener("load", () => {
+//     let res = fileReader.result;
+//     const imgEl = document.createElement("img");
+//     imgEl.src = res;
+//     imgEl.onload = () => {
+//       // height: window.innerWidth > 800 ? 600 : (window.innerWidth * 3) / 4,
+//       // width: window.innerWidth > 800 ? 800 : window.innerWidth,
+//       // imgW * 3 < imgH * 4 imgH = canvaH / 3 || (imgW = canvaH /imgH * imgW) / 3
+//       // imgW * 3 < imgH * 4 imgW = (canvaH /imgH * imgW) 4 || (canvaW) / 4
+//       const scalePercent = ( imgEl.width * 3 < imgEl.height * 4 ) ? canvas.value.height / imgEl.height : canvas.value.width / imgEl.width 
+//       const image = new fabric.Image(imgEl, {
+//         scaleX: scalePercent,
+//         scaleY: scalePercent,
+//         top: 160,
+//         left: 100,
+//       });
+//       canvas.value.add(image);
+//     };
+//   });
+// };
 // 單選 筆刷顏色
 const selectColor = (colorEle) => {
   color.value = colorEle;
@@ -90,6 +92,7 @@ onMounted(() => {
     // RWD
     height: window.innerWidth > 800 ? 600 : (window.innerWidth * 3) / 4,
     width: window.innerWidth > 800 ? 800 : window.innerWidth,
+    backgroundColor: "#ffffff",
   });
   canvas.value.freeDrawingBrush.color = color.value;
   canvas.value.freeDrawingBrush.width = parseInt(width.value, 10);
@@ -159,7 +162,7 @@ const emitAnswer = (answer) => {
           v-model="width"
         />
       </div>
-      <canvas id="c" class="rect"></canvas>
+      <canvas id="c" class="rect before:w-full before:h-full"></canvas>
     </div>
     <div class="my-5 flex flex-col items-center justify-between">
       <div>
@@ -185,22 +188,24 @@ const emitAnswer = (answer) => {
       </div>
       <div class="md:flex mt-5">
         <button
-          class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          class="border rounded-md m-2 p-2 text-white hover:text-black hover:border-black"
           @click.prevent="editEl()"
           v-if="roomHasAnswer"
         >
           <font-awesome-icon icon="paintbrush" v-if="editModel" />
           <font-awesome-icon icon="pen-to-square" v-else />
         </button>
-        <p class="border rounded-md m-2 p-2 text-slate-400 text-center" v-else>請先送出答案</p>
+        <p class="border rounded-md m-2 p-2 text-white text-center" v-else>
+          請先送出答案
+        </p>
         <button
-          class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          class="border rounded-md m-2 p-2 text-white hover:text-black hover:border-black"
           @click.prevent="undoEl()"
         >
           <font-awesome-icon icon="reply" />
         </button>
         <button
-          class="border rounded-md m-2 p-2 text-slate-400 hover:text-black hover:border-black"
+          class="border rounded-md m-2 p-2 text-white hover:text-black hover:border-black"
           @click.prevent="clearEl()"
         >
           <font-awesome-icon icon="trash-can" />
@@ -214,7 +219,7 @@ const emitAnswer = (answer) => {
       </div>
     </div>
   </div>
-  <div class="m-5">
+  <div class="mt-5">
     <MembersChat
       title="draw"
       :describe="String(roomTitle)"

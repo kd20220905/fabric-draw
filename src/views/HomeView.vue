@@ -35,10 +35,10 @@ const toDrawRoom = (path) => {
 </script>
 <template>
   <div
-    class="main flex flex-col px-5 py-8 absolute translate-x-1/2 -translate-y-1/2 right-1/2 top-1/2 bg-white/70 backdrop-blur-sm rounded-xl"
+    class="main flex flex-col px-5 py-8 absolute translate-x-1/2 -translate-y-1/2 right-1/2 top-1/2 bg-white/80 backdrop-blur-md rounded-xl"
   >
-    <h1 class="font-bold text-xl mb-2">{{ massage }}</h1>
-    <span class="text-sm text-red-400">(猜方必填遊戲名稱與房間ID)</span>
+    <h1 class="font-bold text-xl text-sky-900">{{ massage }}</h1>
+    <span class="text-sm text-sky-900 mb-5">(猜方必填遊戲名稱與房間ID)</span>
     <input
       type="text"
       name="name"
@@ -52,14 +52,14 @@ const toDrawRoom = (path) => {
       name="roomId"
       id="roomId"
       v-model="quessData.roomId"
-      class="border rounded-md p-2 mb-2"
+      class="border rounded-md p-2 mb-3"
       placeholder="房間ID : 0000"
     />
     <button
       @click.prevent="
         toQuessRoom(`/quessroom/${quessData.roomId}/${quessData.memberId}`)
       "
-      class="btn-3d bg-green-500 p-3 rounded-full text-white font-bold mb-5 before:bg-green-700 before:rounded-full after:bg-green-600 after:rounded-full"
+      class="btn-3d bg-sky-500 p-3 rounded-full text-white font-bold mb-10 before:bg-sky-700 before:rounded-full after:bg-sky-600 after:rounded-full"
     >
       進房猜畫
     </button>

@@ -12,6 +12,7 @@ import {
   faReply,
   faPenToSquare,
   faPaintbrush,
+  faCircleUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
@@ -20,7 +21,8 @@ library.add(
   faTrashCan,
   faReply,
   faPenToSquare,
-  faPaintbrush
+  faPaintbrush,
+  faCircleUser
 );
 
 const app = createApp(App);

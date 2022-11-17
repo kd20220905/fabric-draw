@@ -3,8 +3,8 @@ import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <div class="bg h-screen mx-auto relative bg-cover">
-    <div class="backdrop-blur-sm absolute w-full h-full"></div>
+  <div class="bg min-h-screen mx-auto relative bg-cover">
+    <div class="backdrop-blur-sm bg-sky-900/70 absolute w-full h-full"></div>
     <RouterView />
   </div>
 </template>
